@@ -1,0 +1,6 @@
+MX6QC398 BOARD
+M:	Paul DeMetrotion <pdemetrotion@winsystems.com>
+S:	Maintained
+F:	board/freescale/mx6qc398/
+F:	include/configs/mx6qc398.h
+F:	configs/mx6qc398_defconfig

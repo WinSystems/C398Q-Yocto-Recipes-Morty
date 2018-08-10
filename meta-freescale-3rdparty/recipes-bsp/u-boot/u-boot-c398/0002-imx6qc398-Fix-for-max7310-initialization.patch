@@ -1,0 +1,33 @@
+From 6b4a3f742a87b449efdd3062f1784e030eaf6cf6 Mon Sep 17 00:00:00 2001
+From: Paul DeMetrotion <pdemetrotion@winsystems.com>
+Date: Mon, 11 Jul 2016 16:22:24 -0500
+Subject: [PATCH 2/2] imx6qc398 Fix for max7310 initialization
+
+---
+ common/board_f.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/common/board_f.c b/common/board_f.c
+index 613332e..6862a2b 100644
+--- a/common/board_f.c
++++ b/common/board_f.c
+@@ -59,6 +59,8 @@
+ #include <dm/root.h>
+ #include <linux/compiler.h>
+ 
++int c398_board_postclk_init(void);
++
+ /*
+  * Pointer to initial global data area
+  *
+@@ -805,6 +807,7 @@ static init_fnc_t init_sequence_f[] = {
+ #endif
+ #if defined(CONFIG_BOARD_POSTCLK_INIT)
+ 	board_postclk_init,
++	c398_board_postclk_init,
+ #endif
+ #ifdef CONFIG_FSL_ESDHC
+ 	get_clocks,
+-- 
+1.9.1
+

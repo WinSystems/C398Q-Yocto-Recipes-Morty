@@ -1,0 +1,36 @@
+From 72575eaea4f5081bbe0732a040a87e50dc6609c8 Mon Sep 17 00:00:00 2001
+From: Paul DeMetrotion <pdemetrotion@winsystems.com>
+Date: Tue, 12 Jul 2016 08:10:16 -0500
+Subject: [PATCH] imx6qc398 Add c398 to Kconfig
+
+---
+ arch/arm/cpu/armv7/mx6/Kconfig | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/cpu/armv7/mx6/Kconfig b/arch/arm/cpu/armv7/mx6/Kconfig
+index 8489182..1fd0729 100644
+--- a/arch/arm/cpu/armv7/mx6/Kconfig
++++ b/arch/arm/cpu/armv7/mx6/Kconfig
+@@ -80,6 +80,11 @@ config TARGET_MX6QSABREAUTO
+ 	select DM
+ 	select DM_THERMAL
+ 
++config TARGET_MX6QC398
++       bool "mx6qc398"
++       select DM
++       select DM_THERMAL
++
+ config TARGET_MX6SABRESD
+ 	bool "mx6sabresd"
+ 	select SUPPORT_SPL
+@@ -163,6 +168,7 @@ source "board/congatec/cgtqmx6eval/Kconfig"
+ source "board/embest/mx6boards/Kconfig"
+ source "board/freescale/mx6qarm2/Kconfig"
+ source "board/freescale/mx6qsabreauto/Kconfig"
++source "board/freescale/mx6qc398/Kconfig"
+ source "board/freescale/mx6sabresd/Kconfig"
+ source "board/freescale/mx6slevk/Kconfig"
+ source "board/freescale/mx6sxsabresd/Kconfig"
+-- 
+1.9.1
+
