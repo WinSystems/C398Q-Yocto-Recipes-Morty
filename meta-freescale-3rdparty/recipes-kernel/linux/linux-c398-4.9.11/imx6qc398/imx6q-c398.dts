@@ -181,7 +181,7 @@
         compatible = "fsl,imx6q-c398-sgtl5000",
                  "fsl,imx-audio-sgtl5000";
         model = "sgtl5000-audio";
-        cpu-dai = <&ssi2>;
+        ssi-controller = <&ssi2>;
         audio-codec = <&sgtl5000>;
         audio-routing =
             "MIC_IN", "Mic Jack",
@@ -306,11 +306,13 @@
     status = "okay";
 };
 
+/*
 &hdmi_cec {
     pinctrl-names = "default";
     pinctrl-0 = <&pinctrl_hdmi_cec>;
     status = "okay";
 };
+*/
 
 &hdmi_core {
     ipu_id = <0>;
@@ -557,12 +559,14 @@
                 MX6QDL_PAD_SD3_DAT1__FLEXCAN2_RX       0x1b0b0
             >;
         };
-
+	
+	/*
         pinctrl_hdmi_cec: hdmicecgrp {
             fsl,pins = <
                 MX6QDL_PAD_KEY_ROW2__HDMI_TX_CEC_LINE  0x1f8b0
             >;
         };
+	*/
 
         pinctrl_hdmi_hdcp: hdmihdcpgrp {
             fsl,pins = <

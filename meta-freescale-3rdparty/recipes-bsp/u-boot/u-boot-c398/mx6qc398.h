@@ -169,6 +169,7 @@
         "mmcroot=/dev/mmcblk${mmcdev}p2 rootwait rw\0"          \
         "mmcargs=setenv bootargs console=${console} "           \
             "root=${mmcroot} "                                  \
+            "video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24 "     \
             "ip=${ip_config}\0"                                 \
         "bootcmd_mmc= "                                         \
             "run mmcargs; "                                     \

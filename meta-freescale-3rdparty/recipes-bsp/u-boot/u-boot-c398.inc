@@ -7,19 +7,17 @@ inherit fsl-u-boot-localversion
 DESCRIPTION = "Bootloader for WinSystems, Inc. imx6q-c398 platform"
 LICENSE = "GPLv2+"
 LIC_FILES_CHKSUM = "file://Licenses/gpl-2.0.txt;md5=b234ee4d69f5fce4486a80fdaf4a4263"
-COMPATIBLE_MACHINE = "imx6qc398"
 
 DEPENDS_mxs += "elftosb-native openssl-native"
 
-PROVIDES += "virtual/bootloader"
 PROVIDES += "u-boot"
 
 SRCBRANCH ??= "master"
 
 SRC_URI = "git://git.freescale.com/imx/uboot-imx.git;protocol=git;branch=${SRCBRANCH} \
 	   file://0001-imx6qc398-Add-c398-to-Kconfig.patch \
-           file://0002-imx6qc398-Fix-for-max7310-initialization.patch \
-           file://mx6qc398_defconfig \
+           file://0002-max7310-init.patch \
+	   file://mx6qc398_defconfig \
            file://mx6qc398_spinor_defconfig \
            file://Kconfig \
            file://MAINTAINERS \
