@@ -1,0 +1,97 @@
+﻿Instructions for Rebuilding 4.9 Ubuntu 16.04 on C398
+1. Use the sources found at https://github.com/WinSystems/C398Q-Yocto-Recipes-Morty to build the kernel and uboot. Requires the community branch for yocto.
+2. dd the uboot onto desired media (uboot currently setup to pull and save env from mmc) with a seek=2 if bs=512
+3. create a partition for the kernel and device tree and copy them over (usually use fat for this. not necessary if rootfs partition is ext2 or ext4 because uboot has load commands for those)
+4. download the rootfs for ubuntu (http://cdimage.ubuntu.com/ubuntu-base/releases/16.04.5/release/ubuntu-base-16.04.5-base-arm64.tar.gz)
+5. copy over the qemu-arm-static to usr/bin of the rootfs so you can chroot into it. (sudo cp /usr/bin/qemu-arm-static $rootfspath/usr/bin  
+6. copy over resolv.conf as well to etc in rootfs (sudo cp /etc/resolv.conf $rootfspath/etc)
+7. sudo chroot $rootfspath
+8. distro=xenial
+9. modify your sources.list as necessary (will need source repos as well for xorg rebuild)
+10. apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 40976EAF437D05B5  
+11. apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 3B4FE6ACC0B21F32 
+12. apt-get update 
+13. apt -y -f install 
+14. apt-get upgrade 
+15. apt-get install nano 
+16. passwd rootfs
+17. adduser winsys
+18. usermod -a -G tty,dialout,adm,sudo,dip,plugdev,audio,video winsys (previous command may not work due to groups not existing yet, but will need it in all those groups at some point)
+19. use visudo to give user ability to sudo
+20. exit
+21. copy kernel source to winsys's home dir. (i put it under a WinSystems folder)
+22. sudo chroot back in
+23. apt install build-essential
+23. use sudo make modules_install firmware_install to add kernel modules and firmware to correct directories on rootfs 
+24. install kernel headers using sudo make headers-install
+25. edit etc/network/interfaces to match your desired settings (may be different for newer than 16.04)
+26. edit etc/init/tty1.conf to bring up serial over console (edit systemd version in 18.04)
+27. edit ets/hostname and etc/hosts to reflect desired hostname (imx6qc398)
+26. exit
+27. rm $rootfspath/usr/bin/qemu-arm-static
+28. rm $rootfspath/etc/resolv.conf
+29. copy rootfs over to partition for it on media
+30. boot it
+31. install some basic tools : apt-get install openssh-server can-utils usbutils build-essential automake autoconf libtool
+32. copy over the following from yocto build : firmware-imx, imx-vpu, imx-codec, imx-lib, xf86-video-imxfb-vivante, imx-gpu-viv, imx-gpu-g2d
+33. copy firmware-imx files to /lib/firmware/vpu
+34. use source for imx-lib and do make -j1 PLATFORM="IMX6Q" then make PLATFORM="IMX6Q" install
+35. use source for imx-codec. run ./autogent.sh --prefix=/usr --enable-fhw --enable-vpu   then make then make install
+36. move the resulting libs from /usr/lib/imx-mm/video-codec and /usr/lib/imx-mm/audio-codec to just /usr/lib
+37. copy libs, includes, and bin out of imx-gpu-g2d to appropriate locations
+38. apt-get install python pkg-config git gstreamer1.0-x gstreamer1.0-tools gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alsa libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-good1.0-dev g++-multilib
+39. git clone git://github.com/Freescale/gstreamer-imx.git
+40. ln –s /usr/lib/arm-linux-gnueabihf/gstreamer-1.0/ /usr/lib/gstreamer-1.0  
+41. cd into it and run ./waf configure --prefix=/usr --kernel-headers=/include 
+42. ./waf  
+43. ./waf install 
+44. apt install  xserver-xorg-dev-hwe-16.04 xserver-xorg-hwe-16.04 xserver-xorg-video-all-hwe-16.04
+44. copy files out of xf86-video-imxfb-vivante to appropriate directories 
+45. copy files out of imx-gpu-viv to appropriate directories
+46. run the following commands
+	backend=x11
+	ln -sf libEGL-${backend}.so /usr/lib/libEGL.so
+	ln -sf libEGL-${backend}.so /usr/lib/libEGL.so.1
+	ln -sf libEGL-${backend}.so /usr/lib/libEGL.so.1.0
+	ln -sf libGAL-${backend}.so /usr/lib/libGAL.so
+	ln -sf libGLESv2-${backend}.so /usr/lib/libGLESv2.so
+	ln -sf libGLESv2-${backend}.so /usr/lib/libGLESv2.so.2
+	ln -sf libGLESv2-${backend}.so /usr/lib/libGLESv2.so.2.0.0
+	for i in egl glesv1_cm glesv2 vg; do
+	cp /usr/lib/pkgconfig/${i}_${backend}.pc /usr/lib/pkgconfig/${i}.pc
+	done
+47. download source for libdrm and add yocto patches. build and install
+48. download the source for xserver-xorg-core-hwe-16.04 (apt-get source)
+49. edit debian rule file to include the following:
+	override_dh_shlibdeps:
+		dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info
+50. grab and apply the following patch from yocto source to xserver-xorg-core-hwe-16.04:  0003-Remove-check-for-useSIGIO-option.patch
+51. build and install debian (apt install ./)
+52. edit xorg.conf to look like following:
+	Section "Device"
+		Identifier  "i.MX Accelerated Framebuffer Device"
+		Driver      "vivante"
+		Option      "fbdev"     "/dev/fb0"
+		Option      "vivante_fbdev" "/dev/fb0"
+		Option      "HWcursor"  "false"
+	EndSection
+
+	Section "ServerFlags"
+		Option "BlankTime"  "0"
+		Option "StandbyTime"  "0"
+		Option "SuspendTime"  "0"
+		Option "OffTime"  "0"
+	EndSection
+53. if galcore is module do following:
+	echo vivante >> /etc/modules  
+	nano /etc/udev/rules.d/10-imx.rules 
+	KERNEL=="galcore",  MODE="0660", GROUP="video"  
+	KERNEL=="mxc_asrc",  MODE="0666" 
+54. apt install lxde
+55. apt install lxsession
+56. apt install chromium
+57. install pulse audio. make sure user is part of audio group
+
+
+
+
