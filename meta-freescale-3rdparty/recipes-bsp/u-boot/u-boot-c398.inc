@@ -16,7 +16,7 @@ SRCBRANCH ??= "master"
 
 SRC_URI = "git://git.freescale.com/imx/uboot-imx.git;protocol=git;branch=${SRCBRANCH} \
 	   file://0001-imx6qc398-Add-c398-to-Kconfig.patch \
-           file://0002-max7310-init.patch \
+           file://0002-imx6qc398-Fix-for-max7310-initialization.patch \
 	   file://mx6qc398_defconfig \
            file://mx6qc398_spinor_defconfig \
            file://Kconfig \
