@@ -318,6 +318,7 @@
     #define CONFIG_ENV_IS_IN_SATA           1
     #define CONFIG_SATA_ENV_DEV             0
     #define CONFIG_ENV_OFFSET               (12 * 64 * 1024)
+    #define CONFIG_SYS_DCACHE_OFF /* remove when sata driver support cache */
 #elif defined(CONFIG_FSL_ENV_IN_MMC)
     #define CONFIG_ENV_IS_IN_MMC            1
     #define CONFIG_ENV_OFFSET               (8 * 64 * 1024)
